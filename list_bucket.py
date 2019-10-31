@@ -29,7 +29,7 @@ def get_bucket(storage_client, bucket):
     except google.cloud.exceptions.NotFound:
         logging.warn('ERROR: Requested bucket doesnt exist!')
 
-def update_bucket_sizes(data, context):
+def main():
     # Initialize the storage client
     storage_client = initiate_storage_client()
 
@@ -46,3 +46,8 @@ def update_bucket_sizes(data, context):
     print("uploading object to bucket {}".format(stuff))
 
     new_blob.upload_from_string(stuff)
+
+
+
+if __name__ == "__main__":
+    main()
