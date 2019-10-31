@@ -58,7 +58,15 @@ def main():
         storage_client = initiate_storage_client()
 
 
-    working_bucket = get_bucket(storage_client, bucket_name)
+    # working_bucket = get_bucket(storage_client, bucket_name)
+
+    blob_list = storage_client.list_blobs(bucket_name)
+
+    for blob in blob_list:
+        print(blob)
+        quit()
+
+    # print(working)
 
 
 
