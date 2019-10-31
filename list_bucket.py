@@ -36,17 +36,17 @@ def get_bucket(storage_client, bucket):
     except google.cloud.exceptions.NotFound:
         print('ERROR: Requested bucket doesnt exist!')
 
-def billing_upload_byfs_to_bigquery_historical(storage_client, bucket, file_to_upload):
-    """Import the provided billing dict to bigquery table for historical purposes."""
+def upload_to_bq_bucket(storage_client, bucket, file_to_upload):
+    """Upload bigquery file."""
 
+    with open(file_to_upload, 'r') as infile:
+        # Insert the newline delimeted json file to bucket, cloud function will grab this and put in bq
+        bq_upload_bucket = get_bucket(storage_client, 'archive-legacy-bq-ingest')
+        new_obj = bq_upload_bucket.blob('bits_archive_legacy/{}.json'.format(bucket.name.replace('-', '_')))
 
-    # print("\nUploading filesystem data to bigquery...")
-    # # Insert the newline delimeted json file to bucket, cloud function will grab this and put in bq
-    # g.storage().insert_object(
-    #     'bits-bitstore-json-billing-data-ingest',
-    #     'broad_bitstore_app/bits_billing_byfs_bitstore_historical.json',
-    #     '\n'.join(row_list)
-    # )
+        print("uploading object to bucket")
+
+        new_obj.upload_from_file(infile)
 
 def main():
     args = parse_arguments()  # Parse arguments
@@ -70,12 +70,11 @@ def main():
         # Initialize the storage client
         storage_client = initiate_storage_client()
 
+    working_bucket = storage_client.get_bucket(bucket_name)
 
-    # working_bucket = get_bucket(storage_client, bucket_name)
+    blob_list = storage_client.list_blobs(working_bucket.name)
 
-    blob_list = storage_client.list_blobs(bucket_name)
-
-    with open('{}.list'.format(bucket_name), 'w') as outfile:
+    with open('{}.list'.format(working_bucket.name), 'w') as outfile:
         for blob in blob_list:
 
             blob_dir = {}
@@ -101,7 +100,7 @@ def main():
 
             outfile.write('{}\n'.format(blob_json))
 
-            quit()
+    upload_to_bq_bucket(storage_client, working_bucket, '{}.list'.format(working_bucket.name))
 
 if __name__ == "__main__":
     main()
