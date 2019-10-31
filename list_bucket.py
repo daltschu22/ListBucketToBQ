@@ -74,6 +74,8 @@ def main():
 
     blob_list = storage_client.list_blobs(working_bucket.name)
 
+    print("Listing bucket...")
+    
     with open('{}.list'.format(working_bucket.name), 'w') as outfile:
         for blob in blob_list:
 
@@ -94,7 +96,7 @@ def main():
             blob_dir['url'] = blob.path
             blob_dir['id'] = blob.id
 
-            print(blob_dir)
+            # print(blob_dir)
 
             blob_json = json.dumps(blob_dir)
 
