@@ -57,17 +57,16 @@ def main():
         # Initialize the storage client
         storage_client = initiate_storage_client()
 
-    service_account_name = storage_client.get_service_account_email(PROJECT)
-
-    stuff = "{} - {}".format(bucket_name, service_account_name)
 
     working_bucket = get_bucket(storage_client, bucket_name)
 
-    new_blob = working_bucket.blob('testing123')
 
-    print("uploading object to bucket {}".format(stuff))
 
-    new_blob.upload_from_string(stuff)
+    # new_blob = working_bucket.blob('testing123')
+
+    # print("uploading object to bucket {}".format(stuff))
+
+    # new_blob.upload_from_string(stuff)
 
 
 
