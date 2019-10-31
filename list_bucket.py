@@ -4,6 +4,7 @@ import os
 import argparse
 from google.cloud import storage
 import google.cloud.exceptions
+from google.oauth2 import service_account
 
 PROJECT = os.environ.get('GCP_PROJECT')
 # SERVICE_ACCOUNT = os.environ.get('')
@@ -16,7 +17,7 @@ def parse_arguments():
 
     return parser.parse_args()
 
-def initiate_storage_client():
+def initiate_storage_client(credentials):
     # print("Initializing google storage client...")
     try:
         storage_client = storage.Client(project=PROJECT)
@@ -32,9 +33,6 @@ def get_bucket(storage_client, bucket):
         print('ERROR: Requested bucket doesnt exist!')
 
 def main():
-    # Initialize the storage client
-    storage_client = initiate_storage_client()
-
     args = parse_arguments()  # Parse arguments
 
     bucket_name = args.bucket_name
@@ -44,8 +42,16 @@ def main():
     if project_override:
         PROJECT = project_override
 
-    # if service_account:
-    #     SERVICE_ACCOUNT = service_account
+    if service_account:
+        SERVICE_ACCOUNT = service_account
+
+    credentials = service_account.Credentials.from_service_account_file(
+        SERVICE_ACCOUNT,
+        scopes=["https://www.googleapis.com/auth/cloud-platform"],
+    )
+
+    # Initialize the storage client
+    storage_client = initiate_storage_client(credentials)
 
     service_account_name = storage_client.get_service_account_email(PROJECT)
 
