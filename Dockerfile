@@ -18,7 +18,7 @@ RUN wget -nv \
     mkdir /root/tools && \
     tar xvzf google-cloud-sdk.tar.gz -C /root/tools && \
     rm google-cloud-sdk.tar.gz && \
-    /root/tools/google-cloud-sdk/install.sh --usage-reporting=false \
+    /root/tools/google-cloud-sdk/install.sh--usage-reporting=false \
         --path-update=false --bash-completion=false \
         --disable-installation-options && \
     rm -rf /root/.config/* && \
